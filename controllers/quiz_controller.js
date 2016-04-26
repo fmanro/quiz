@@ -15,3 +15,8 @@ exports.check = function(req, res, next){
 	res.render('quizzes/result', {result: result,
 				       answer: answer });
 };
+
+//GET /autor
+exports.autor = function(req, res, next){
+	res.render('autor', {autor: "Fátima Manso Rodríguez" });
+};

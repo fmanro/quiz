@@ -1,0 +1,1 @@
+<p> Autores: <%= autor %> </p>
