@@ -11,6 +11,10 @@ body 	{ font: 16px Georgia, serif;
 	  background: #eee; }
 
 a 	{ color: #00B7FF; }
+ul 	{ color: #999; }
+#flashsuccess > h3	{ background: green;}
+#flasherror > h3 	{ background: red;}
+#flashinfo >h3	 	{ background: orange;}
 
 section > div 	{ padding: 20px; }
 header	{ text-align: center; }

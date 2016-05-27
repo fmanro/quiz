@@ -25,10 +25,23 @@
   
     <nav class="main" role="navigation">
       <a href="/">Inicio</a>
-      <a href="/question">Preguntas</a>
+      <a href="/quizzes">Preguntas</a>
       <a href="/autor">Créditos</a>
     </nav>
-  
+	
+   <section>
+	<% if (messages.info) { %>
+	     <article id='flashinfo'>
+		<h3> Información de interés </h3>
+		<ul>
+		     <% for (var i in messages.info) { %>
+			<li> <%= messages.info[i] %>  </li>
+		     <% } %>
+		</ul>
+	     </article>
+	<% } %>
+   </section>
+   
    <section class="main">
      <div>
        <%- body %>
@@ -38,7 +51,7 @@
     <footer class="main">
       <a href="http://es.wikipedia.org/wiki/Quiz">
         ¿Qué es un Quiz?</a>
-      <br> <a href="https://github.com/fmanro/quiz_2016.git" target="_blank"> Página de Github </a>
+      <br> <a href="https://github.com/fmanro/quiz" target="_blank"> Página de Github </a>
     </footer>
   </div>
   </body> 
