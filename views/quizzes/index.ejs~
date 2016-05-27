@@ -1,11 +1,12 @@
-
+<<<<<<< HEAD
+=======
 <form method="get" action="/quizzes">
 	Busca una pregunta: 
 	<input type="text" name="search" placeholder="Palabras clave a buscar">
 	<input type="submit" value="Buscar">
 </form>
 
-
+>>>>>>> busquedas
 <table>
    <% for (var i in quizzes) { %>
 	<tr>
