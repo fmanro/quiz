@@ -106,6 +106,19 @@ exports.update = function(req, res, next){
 		});
 };
 
+// DELETE /quizzes/:id
+exports.destroy = function(req, res, next) {
+	req.quiz.destroy()
+	.then(function() {
+		req.flash('success', 'Quiz borrado con éxito.');
+		res.redirect('/quizzes');
+	})
+	.catch(function(error){
+		req.flash('error', 'Error al editar el Quiz: ' +error.message);
+	next(error);
+	})
+};
+
 //GET /autor
 exports.autor = function(req, res, next){
 	res.render('autor', {autor: "Fátima Manso Rodríguez" });
