@@ -17,6 +17,8 @@ exports.load = function(req, res, next, quizId){
 // GET /quizzes
 exports.index = function(req, res, next){
    models.Quiz.findAll()
+   var format = req.params.format || ".html";
+   if(format === '.html'){
    if(!req.query.search){	
 	 models.Quiz.findAll()
 
@@ -32,6 +34,17 @@ exports.index = function(req, res, next){
 		var busqueda = req.query.search;
 		res.render('quizzes/index', {quizzes: quizzes.sort(), busqueda: busqueda});
 	}).catch(function(error){ next(error); });
+   }
+   }else if (format === '.json'){
+	models.Quiz.findAll()
+	.then(function(quizzes){
+		res.send(JSON.stringify(quizzes));
+	}).catch(function(error){
+		req.flash('error', 'Error obteniendo JSON');
+		next(error);
+	});
+   }else {
+	next(new Error('Error de formato'));
    }
 
 };
@@ -113,7 +126,7 @@ exports.destroy = function(req, res, next) {
 		req.flash('success', 'Quiz borrado con éxito.');
 		res.redirect('/quizzes');
 	})
-	.cacth(function(error){
+	.catch(function(error){
 		req.flash('error', 'Error al editar el Quiz: ' +error.message);
 	next(error);
 	})
