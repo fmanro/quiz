@@ -13,7 +13,6 @@ var url, storage;
 
 if(!process.env.DATABASE_URL){
 	url = "sqlite:///";
-	storage = "quiz.sqlite";
 } else {
 	url = process.env.DATABASE_URL;
 	storage = process.env.DATABASE_STORAGE || "";
