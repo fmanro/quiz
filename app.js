@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var partials = require('express-partials');
 var session = require('express-session');
 var flash = require('express-flash');
+var methodOverride = require('method-override');
 
 var routes = require('./routes/index');
 
@@ -29,6 +30,7 @@ app.use(session( {secret: "Quiz 2016",
 		  resave: false,
 		  saveUninitialized: true}));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method', { methods: ["POST", "GET"]}));
 
 app.use('/', routes);
 
