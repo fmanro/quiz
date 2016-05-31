@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.createTable(
       'Quizzes', 
       { id:          {  type: Sequelize.INTEGER,  allowNull: false,
-                        primaryKey: true,         autoincrement:true,
+                        primaryKey: true,         autoIncrement:true,
                         unique: true},
         question:     { type: Sequelize.STRING,
                         VALIDATE: {notEmpty:  {msg: "Falta Pregunta"} } },
