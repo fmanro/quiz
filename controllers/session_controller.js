@@ -47,6 +47,14 @@ exports.create = function(req, res, next){
 		});
 };
 
+exports.loginRequired = function(req, res, next){
+	if(req.session.user){
+		next();
+	} else {
+		res.redirect('/session?redir=' + (req.param('redir') || req.url));
+	}
+};
+
 exports.autologout = function(req, res, next){
 	if(req.session.user) {
 		if(req.session.user.timeExp >= Date.now()){

@@ -1,6 +1,7 @@
 var models = require('../models');
 var Sequelize = require('sequelize');
 var url = require('url');
+var timeout = 2 * 60 * 1000;
 
 var authenticate = function(login, password){
 	return models.User.findOne({ where: {username: login }})
@@ -15,7 +16,7 @@ var authenticate = function(login, password){
 
 //GET /session --Formulario de login
 exports.new = function(req, res, next){
-	var redir = req.query.redir || url.parse(req.headers.referer || /").pathname;
+	var redir = req.query.redir || url.parse(req.headers.referer || "/").pathname;
 if (redir === '/session' || redir === '/users/new'){
 		redir = "/";
 	}
@@ -31,8 +32,9 @@ exports.create = function(req, res, next){
 	authenticate(login, password)
 		.then(function(user){
 			if(user) {
+				var timeExp = Date.now() + timeout;
 				req.session.user = { 	id: user.id,
-										username: user.username };
+										username: user.username, timeExp: timeExp };
 				res.redirect(redir); //redirección a redir
 			}else {
 				req.flash('error', 'La autenticación ha fallado. Reinténtalo otra vez.');
@@ -44,6 +46,19 @@ exports.create = function(req, res, next){
 			next(error);
 		});
 };
+
+exports.autologout = function(req, res, next){
+	if(req.session.user) {
+		if(req.session.user.timeExp >= Date.now()){
+			req.session.user.timeExp = Date.now() + timeout;
+		} else {
+			delete req.session.user;
+			
+		}		
+	}
+	next();
+};
+
 
 //DELETE /session --destruir sesion
 exports.destroy = function(req, res, next){
