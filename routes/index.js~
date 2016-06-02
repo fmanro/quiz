@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var multer = require('multer');
+var upload = multer({ dest: './uploads/' });
 
 var quizController = require('../controllers/quiz_controller');
 var commentController = require('../controllers/comment_controller');
@@ -21,7 +23,7 @@ router.get('/quizzes.:format?',			quizController.index);
 router.get('/quizzes/:quizId(\\d+).:format?',	quizController.show);
 router.get('/quizzes/:quizId(\\d+)/check',	quizController.check);
 router.get('/quizzes/new', 			sessionController.loginRequired,	quizController.new);
-router.post('/quizzes', 			sessionController.loginRequired,	quizController.create);
+router.post('/quizzes', 			sessionController.loginRequired, upload.single('image'), quizController.create);
 router.get('/quizzes/:quizId(\\d+)/edit',	sessionController.loginRequired,
 						quizController.ownershipRequired,
 					 	quizController.edit);
@@ -47,13 +49,13 @@ router.get('/users/:userId(\\d+)',	userController.show); // ver un usuario
 router.get('/users/new', 		userController.new); // formulario sign in 
 router.post('/users', 			userController.create); //registrar un usuario
 router.get('/users/:userId(\\d+)/edit',	sessionController.loginRequired,
-					sessionController.adminOrMyselfRequired,
+					userController.adminOrMyselfRequired,
 					userController.edit); //editar cuenta
 router.put('/users/:uderId(\\d+)', 	sessionController.loginRequired,
-					sessionController.adminOrMyselfRequired,	
+					userController.adminOrMyselfRequired,	
 					userController.update); //actualizar cuenta
 router.delete('/users/:userId(\\d+)',	sessionController.loginRequired,
-					sessionController.adminAndNotMyselfRequired,				
+					userController.adminAndNotMyselfRequired,				
 					userController.destroy); // borrar cuenta
 
 // Definición de rutas de sesion
