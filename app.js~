@@ -8,6 +8,7 @@ var partials = require('express-partials');
 var session = require('express-session');
 var flash = require('express-flash');
 var methodOverride = require('method-override');
+var sessionController = require('./controllers/session_controller');
 
 var routes = require('./routes/index');
 
@@ -32,8 +33,15 @@ app.use(session( {secret: "Quiz 2016",
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method', { methods: ["POST", "GET"]}));
 
-app.use('/', routes);
+// Helper dinamico:
+app.use(function(req, res, next){
+	//Hacer visible req.session en las vistas
+	res.locals.session = req.session;
+	next();
+});
 
+app.use('/', routes);
+app.use(sessionController.autologout);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

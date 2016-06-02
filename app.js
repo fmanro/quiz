@@ -43,6 +43,18 @@ app.use(function(req, res, next){
 app.use('/', routes);
 app.use(sessionController.autologout);
 
+// En produccion (Heroku) redirijo ls peticiones http a https.
+// Documentación: http://jaketrent.com/post/https-redirect-node-heroku/
+if (app.get('env') === 'production'){
+	app.use(function(req, res, next) {
+		if (req.headers['x-forwarded-proto'] !== 'https') {
+			res.redirect('https:/' +req.get('Host') + req.url);
+		} else {
+			next();  /* Continue to other router if we're not redirecting */
+		}
+	});
+}
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
