@@ -43,6 +43,10 @@ Quiz.hasMany(Comment);
 User.hasMany(Quiz, {foreignKey: 'AuthorId'});
 Quiz.belongsTo(User, {as: 'Author', foreignKey: 'AuthorId'});
 
+// Relacion 1 a N entre User y Comment
+User.hasMany(Comment, {foreignKey: 'AuthorId'});
+Comment.belongsTo(User, {as: 'Author', foreignKey: 'AuthorId'});
+
 // Relacion 1-a-1 entre Quiz y Attachment
 Attachment.belongsTo(Quiz);
 Quiz.hasOne(Attachment);

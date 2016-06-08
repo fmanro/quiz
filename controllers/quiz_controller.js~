@@ -4,11 +4,14 @@ var cloudinary = require('cloudinary');
 var fs = require('fs');
 
 var cloudinary_image_options = { crop: 'limit', width: 200, height: 200, radius: 5, 
-+                                 border: "3px_solid_blue", tags: ['core', 'quiz-fmanro'] };
+                                 border: "3px_solid_blue", tags: ['core', 'quiz-fmanro'] };
 
 // Autoload el quiz asociado a :quizId
 exports.load = function(req, res, next, quizId){
-	 models.Quiz.findById(quizId, { include: [ models.Comment, models.Attachment ] })
+	 models.Quiz.findById(quizId, { include: [{model: models.Comment, include: [ 
+						 {model: models.User, as: 'Author', attributes: ['username']}]},
+						 models.Attachment, 
+						 {model: models.User, as: 'Author', attributes: ['username']} ] })
 	.then(function(quiz) {
 	    if(quiz){
 		req.quiz = quiz;
@@ -21,7 +24,7 @@ exports.load = function(req, res, next, quizId){
 
 // GET /quizzes
 exports.index = function(req, res, next){
-   models.Quiz.findAll({include: [models.Attachment]})
+   models.Quiz.findAll({include: [models.Attachment,  {model: models.User, as: 'Author', attributes: ['username']} ]})
    var format = req.params.format || "html";
    if(format === 'html'){
    	if(!req.query.search){	
@@ -236,4 +239,41 @@ function updateAttachment(req, uploadResult, quiz) {
         req.flash('error', 'No se ha podido salvar la nueva imagen: '+error.message);
         cloudinary.api.delete_resources(uploadResult.public_id);
      });
+}
+
+
+function uploadResourceToCloudinary(req) {
+    return new Promise(function(resolve,reject) {
+        var path = req.file.path;
+        cloudinary.uploader.upload(path, function(result) {
+                fs.unlink(path); // borrar la imagen subida a ./uploads
+                if (! result.error) {
+                    resolve({ public_id: result.public_id, url: result.secure_url });
+                } else {
+                    req.flash('error', 'No se ha podido salvar la nueva imagen: '+result.error.message);
+                    resolve(null);
+                }
+            },
+            cloudinary_image_options
+        );
+    })
+}
+
+function createAttachment(req, uploadResult, quiz) {
+    if (!uploadResult) {
+        return Promise.resolve();
+    }
+
+    return models.Attachment.create({ public_id: uploadResult.public_id,
+                                      url: uploadResult.url,
+                                      filename: req.file.originalname,
+                                      mime: req.file.mimetype,
+                                      QuizId: quiz.id })
+    .then(function(attachment) {
+        req.flash('success', 'Imagen nueva guardada con éxito.');
+     })
+    .catch(function(error) { // Ignoro errores de validacion en imagenes
+        req.flash('error', 'No se ha podido salvar la nueva imagen: '+error.message);
+        cloudinary.api.delete_resources(uploadResult.public_id);
+    });
 }
